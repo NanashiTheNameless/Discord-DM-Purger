@@ -26,11 +26,15 @@ pip install -r requirements.txt
 
 3. Install the required dependencies:
 
-```pip3 install -r requirements.txt```
+```sh
+pip3 install -r requirements.txt
+```
 
 4. Run the bot using the following command:
 
-```python3 main.py```
+```sh
+python3 main.py
+```
 
 ## Usage
 
