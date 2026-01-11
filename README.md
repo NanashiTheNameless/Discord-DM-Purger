@@ -14,10 +14,6 @@ To run this bot, you need the following Python libraries:
 - [`dolfies/discord.py-self`](<https://github.com/dolfies/discord.py-self>) (for interacting with the Discord API)
 - [`colorama`](<https://pypi.org/project/colorama/>) (for colored terminal output)
 
-Install the dependencies with:
-
-pip install -r requirements.txt
-
 ## Setup
 
 1. Clone the repository or download the script.
