@@ -11,8 +11,8 @@ This is a Discord selfbot script written in Python using the `discord.py-self` l
 
 To run this bot, you need the following Python libraries:
 
-- `discord.py-self` (for interacting with the Discord API)
-- `colorama` (for colored terminal output)
+- [`dolfies/discord.py-self`](<https://github.com/dolfies/discord.py-self>) (for interacting with the Discord API)
+- [`colorama`](<https://pypi.org/project/colorama/>) (for colored terminal output)
 
 Install the dependencies with:
 
