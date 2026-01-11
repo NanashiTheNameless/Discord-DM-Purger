@@ -6,7 +6,7 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-TOKEN = ''
+TOKEN = 'YOUR_TOKEN_HERE'
 
 client = discord.Client()
 
