@@ -27,6 +27,8 @@ cp .env.example .env
 
    `.env` is gitignored, so your token stays out of version control.
 
+   Optionally set `DM_ID` in `.env` to skip the interactive DM list. It accepts a DM channel ID, a Group DM channel ID, or the other user's ID.
+
 3. Install the required dependencies:
 
 ```sh
@@ -47,7 +49,7 @@ You will be prompted to confirm before starting.
 
 For each option, you will be asked if you want to set a custom delay between message deletions.
 
-You can select the DM you wish to purge by choosing its number from the list of DMs.
+You can select the DM you wish to purge by choosing its number from the list of DMs, or set `DM_ID` in `.env` to target one directly.
 
 The bot will print logs of its actions in the terminal, showing which messages were deleted and any errors that occurred.
 

@@ -14,6 +14,9 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN or TOKEN == "YOUR_TOKEN_HERE":
     sys.exit("DISCORD_TOKEN is not set. Copy .env.example to .env and add your token.")
 
+# Optional: DM channel ID, Group DM channel ID, or user ID to purge without the interactive list.
+DM_ID = os.getenv("DM_ID", "").strip()
+
 client = discord.Client()
 
 DEFAULT_DELAY = 0.5
@@ -40,44 +43,69 @@ async def on_ready():
         print_message("Invalid choice. Exiting...", Fore.RED)
         await client.close()
 
+def find_dm_by_id(dms, target_id):
+    for dm in dms:
+        if dm.id == target_id:
+            return dm
+        if isinstance(dm, discord.DMChannel) and dm.recipient and dm.recipient.id == target_id:
+            return dm
+    return None
+
 async def select_specific_dm():
-    print_message("Fetching all DM channels...", Fore.CYAN)
     dms = client.private_channels
 
-    for index, dm in enumerate(dms, start=1):
-        dm_name = dm.name if isinstance(dm, discord.GroupChannel) else dm.recipient
-        print_message(f"{index}. {dm_name} (ID: {dm.id})", Fore.YELLOW)
+    if DM_ID:
+        try:
+            target_id = int(DM_ID)
+        except ValueError:
+            print_message(f"DM_ID in .env is not a valid ID: {DM_ID}", Fore.RED)
+            await client.close()
+            return
 
-    choice = input(f"{Fore.GREEN}Enter the number corresponding to the DM you want to clear: ").strip()
+        selected_dm = find_dm_by_id(dms, target_id)
+        if selected_dm is None:
+            print_message(f"No DM or Group DM found matching ID {target_id}.", Fore.RED)
+            await client.close()
+            return
 
-    try:
-        choice = int(choice)
-        selected_dm = dms[choice - 1]
+        dm_name = selected_dm.name if isinstance(selected_dm, discord.GroupChannel) else selected_dm.recipient
+        print_message(f"Selected from .env: {dm_name} (ID: {selected_dm.id})", Fore.YELLOW)
+    else:
+        print_message("Fetching all DM channels...", Fore.CYAN)
+        for index, dm in enumerate(dms, start=1):
+            dm_name = dm.name if isinstance(dm, discord.GroupChannel) else dm.recipient
+            print_message(f"{index}. {dm_name} (ID: {dm.id})", Fore.YELLOW)
 
-        custom_delay_input = input(f"{Fore.GREEN}Do you want to set a custom delay for message deletions? (y/n): ").strip().lower()
-        if custom_delay_input == "y":
-            delay = input(f"{Fore.GREEN}Enter the delay (in seconds): ").strip()
-            try:
-                delay = float(delay)
-                if delay <= 0:
-                    print_message("Invalid delay value. Using default delay.", Fore.YELLOW)
-                    delay = DEFAULT_DELAY
-            except ValueError:
-                print_message("Invalid delay input. Using default delay.", Fore.YELLOW)
+        choice = input(f"{Fore.GREEN}Enter the number corresponding to the DM you want to clear: ").strip()
+        try:
+            selected_dm = dms[int(choice) - 1]
+        except (IndexError, ValueError):
+            print_message("Invalid input. Please enter a valid number.", Fore.RED)
+            await client.close()
+            return
+
+    custom_delay_input = input(f"{Fore.GREEN}Do you want to set a custom delay for message deletions? (y/n): ").strip().lower()
+    if custom_delay_input == "y":
+        delay = input(f"{Fore.GREEN}Enter the delay (in seconds): ").strip()
+        try:
+            delay = float(delay)
+            if delay <= 0:
+                print_message("Invalid delay value. Using default delay.", Fore.YELLOW)
                 delay = DEFAULT_DELAY
-        else:
+        except ValueError:
+            print_message("Invalid delay input. Using default delay.", Fore.YELLOW)
             delay = DEFAULT_DELAY
+    else:
+        delay = DEFAULT_DELAY
 
-        print_message(f"Using a delay of {delay} seconds for the selected DM.", Fore.GREEN)
+    print_message(f"Using a delay of {delay} seconds for the selected DM.", Fore.GREEN)
 
-        if isinstance(selected_dm, discord.DMChannel):
-            await purge_user_dm(selected_dm, delay)
-        elif isinstance(selected_dm, discord.GroupChannel):
-            await purge_group_dm(selected_dm, delay)
-        else:
-            print_message("Invalid choice.", Fore.RED)
-    except (IndexError, ValueError):
-        print_message("Invalid input. Please enter a valid number.", Fore.RED)
+    if isinstance(selected_dm, discord.DMChannel):
+        await purge_user_dm(selected_dm, delay)
+    elif isinstance(selected_dm, discord.GroupChannel):
+        await purge_group_dm(selected_dm, delay)
+    else:
+        print_message("Invalid choice.", Fore.RED)
 
     await client.close()
 
