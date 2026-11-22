@@ -13,12 +13,19 @@ To run this bot, you need the following Python libraries:
 
 - [`dolfies/discord.py-self`](<https://github.com/dolfies/discord.py-self>) (for interacting with the Discord API)
 - [`colorama`](<https://pypi.org/project/colorama/>) (for colored terminal output)
+- [`python-dotenv`](<https://pypi.org/project/python-dotenv/>) (for loading the token from `.env`)
 
 ## Setup
 
 1. Clone the repository or download the script.
 
-2. Replace the placeholder YOUR_TOKEN_HERE with your own Discord token.
+2. Copy `.env.example` to `.env` and replace `YOUR_TOKEN_HERE` with your own Discord token:
+
+```sh
+cp .env.example .env
+```
+
+   `.env` is gitignored, so your token stays out of version control.
 
 3. Install the required dependencies:
 

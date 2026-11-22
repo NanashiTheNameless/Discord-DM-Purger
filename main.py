@@ -1,12 +1,18 @@
 import discord
 from discord.ext import commands
 import asyncio
+import os
+import sys
 import time
 from colorama import Fore, Style, init
+from dotenv import load_dotenv
 
 init(autoreset=True)
+load_dotenv()
 
-TOKEN = 'YOUR_TOKEN_HERE'
+TOKEN = os.getenv("DISCORD_TOKEN")
+if not TOKEN or TOKEN == "YOUR_TOKEN_HERE":
+    sys.exit("DISCORD_TOKEN is not set. Copy .env.example to .env and add your token.")
 
 client = discord.Client()
 
